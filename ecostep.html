@@ -1,41 +1,233 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Eco Step</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #e8f5e9; color: #2e7d32; }
-        .hero { text-align: center; padding: 50px 20px; background: #c8e6c9; }
-        .btn { display: inline-block; margin: 10px; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 5px; }
-        .features { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 30px; }
-        .card { background: rgb(156, 255, 132); padding: 20px; border-radius: 10px; width: 200px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .footer { text-align: center; padding: 20px; background: #a5d6a7; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco Step</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #2e8b57;
+      --light-green: #dff5e1;
+      --white: #fff;
+      --gray: #333;
+      --light-gray: #f5f5f5;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--gray);
+      background: var(--white);
+      line-height: 1.6;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255,255,255,0.95);
+      padding: 15px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--gray);
+      margin-left: 20px;
+      position: relative;
+    }
+    .nav-links a:hover {
+      color: var(--green);
+    }
+    .page {
+      display: none;
+      padding-top: 100px;
+    }
+    .page.active {
+      display: block;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+    .auth-box {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: 50px auto;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .form-group {
+      margin: 15px 0;
+      text-align: left;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    footer {
+      background: var(--gray);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Every Step Counts 🌿</h1>
-        <p>Reduce your carbon footprint with fun challenges</p>
-        <a href="#" class="btn">Get Started</a>
-        <a href="#" class="btn">Learn More</a>
-    </div>
-    
-    <div class="features">
-        <div class="card">
-            <h3>Track Steps</h3>
-            <p>Monitor your eco actions</p>
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo"><i class="fas fa-leaf"></i> Eco Step</div>
+        <div class="nav-links">
+          <a href="#" onclick="showPage('home')">Home</a>
+          <a href="#" onclick="showPage('dashboard')" id="dashboard-link" style="display: none;">Dashboard</a>
+          <a href="#" onclick="signOut()" id="signout-link" style="display: none;">Sign Out</a>
         </div>
-        <div class="card">
-            <h3>Earn Rewards</h3>
-            <p>Get points for green choices</p>
-        </div>
-        <div class="card">
-            <h3>Join Challenges</h3>
-            <p>Team up with others</p>
-        </div>
+      </nav>
     </div>
-    
-    <div class="footer">
-        <p>© 2025 Eco Step | <a href="#">Privacy</a> | <a href="#">Contact</a></p>
+  </header>
+ HOME
+  <section id="home-page" class="page active">
+    <div class="container" style="padding: 120px 0; text-align: center;">
+      <h1>Every Step Counts 🌿</h1>
+      <p>Gamify your green journey</p>
+      <div style="margin-top: 20px;">
+        <a href="#" class="btn btn-primary" onclick="showPage('signup')">Sign Up</a>
+        <a href="#" class="btn" onclick="showPage('signin')">Sign In</a>
+      </div>
     </div>
+  </section>
+SIGNUP
+  <section id="signup-page" class="page">
+    <div class="auth-box">
+      <h2>Create Account</h2>
+      <form id="signup-form">
+        <div class="form-group">
+          <input type="text" id="signup-name" class="form-control" placeholder="Name" required />
+        </div>
+        <div class="form-group">
+          <input type="email" id="signup-email" class="form-control" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
+        </div>
+        <div class="form-group">
+          <input type="password" id="signup-confirm-password" class="form-control" placeholder="Confirm" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Sign Up</button>
+      </form>
+      <p style="margin-top:15px;">
+        Have an account? <a href="#" onclick="showPage('signin')">Sign In</a>
+      </p>
+    </div>
+  </section>
+  SIGN IN
+  <section id="signin-page" class="page">
+    <div class="auth-box">
+      <h2>Sign In</h2>
+      <form id="signin-form">
+        <div class="form-group">
+          <input type="email" id="signin-email" class="form-control" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <input type="password" id="signin-password" class="form-control" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Sign In</button>
+      </form>
+      <p style="margin-top:15px;">
+        No account? <a href="#" onclick="showPage('signup')">Sign Up</a>
+      </p>
+    </div>
+  </section>
+  Dashboard
+  <section id="dashboard-page" class="page">
+    <div class="container" style="padding-top: 120px; text-align: center;">
+      <h2>Your Eco Dashboard</h2>
+      <p style="font-size: 3rem; color: var(--green); margin: 30px 0;">1,250 pts</p>
+      <p>Welcome back! You're making a difference 🌍</p>
+    </div>
+  </section>
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Eco Step. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(page + '-page').classList.add('active');
+      updateNav();
+    }
+    function updateNav() {
+      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      document.getElementById('dashboard-link').style.display = loggedIn ? 'inline' : 'none';
+      document.getElementById('signout-link').style.display = loggedIn ? 'inline' : 'none';
+
+      if (loggedIn && ['signin', 'signup'].includes(location.hash.slice(1))) showPage('dashboard');
+      if (!loggedIn && ['dashboard'].includes(location.hash.slice(1))) showPage('signin');
+    }
+    document.getElementById('signup-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (document.getElementById('signup-password').value !== 
+          document.getElementById('signup-confirm-password').value) {
+        alert('Passwords do not match!');
+        return;
+      }
+      localStorage.setItem('isLoggedIn', 'true');
+      alert('Signed up!');
+      showPage('dashboard');
+    });
+    document.getElementById('signin-form').addEventListener('submit', e => {
+      e.preventDefault();
+      localStorage.setItem('isLoggedIn', 'true');
+      alert('Signed in!');
+      showPage('dashboard');
+    });
+    function signOut() {
+      localStorage.clear();
+      alert('Signed out.');
+      showPage('signin');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNav();
+    });
+  </script>
 </body>
 </html>
