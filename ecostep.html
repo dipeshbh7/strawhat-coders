@@ -1,262 +1,626 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eco Step</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --green: #2e8b57;
-      --light-green: #dff5e1;
-      --white: #fff;
-      --gray: #333;
-      --light-gray: #f5f5f5;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      color: var(--gray);
-      background: var(--white);
-      line-height: 1.6;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: rgba(255,255,255,0.95);
-      padding: 15px 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      z-index: 1000;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--green);
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--gray);
-      margin-left: 20px;
-      position: relative;
-    }
-
-    .nav-links a:hover {
-      color: var(--green);
-    }
-
-    .page {
-      display: none;
-      padding-top: 100px;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 12px 28px;
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: white;
-    }
-
-    .auth-box {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 400px;
-      margin: 50px auto;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .form-group {
-      margin: 15px 0;
-      text-align: left;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-
-    footer {
-      background: var(--gray);
-      color: white;
-      padding: 40px 0;
-      text-align: center;
-    }
-
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-    }
-  </style>
+    <!-- 
+        Eco Step - Environmental Gamification Platform
+        
+        A web application that gamifies sustainable living by allowing users to:
+        - Track eco-friendly actions and earn points
+        - Participate in environmental challenges
+        - Claim rewards for sustainable behavior
+        - Share their environmental work with a community
+        
+        Features:
+        - Multi-language support (English & Nepali)
+        - User authentication with localStorage
+        - Community post sharing system
+        - Responsive design for all devices
+        - Local data persistence
+        
+        Built with: HTML5, CSS3, Vanilla JavaScript ES6+
+        Author: Eco Step Team
+        Version: 2.0
+        Last Updated: 2025
+    -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Step - Gamify Your Green Journey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2e8b57">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div class="container">
-      <nav class="navbar">
-        <div class="logo"><i class="fas fa-leaf"></i> Eco Step</div>
-        <div class="nav-links">
-          <a href="#" onclick="showPage('home')">Home</a>
-          <a href="#" onclick="showPage('dashboard')" id="dashboard-link" style="display: none;">Dashboard</a>
-          <a href="#" onclick="signOut()" id="signout-link" style="display: none;">Sign Out</a>
+    <div id="toasts" aria-live="polite" aria-atomic="true"></div>
+    
+    <!-- Gemini Trash-to-Treasure Chatbot -->
+    <div id="chatbot-widget" class="chatbot-widget" role="complementary" aria-label="Trash to Treasure AI Chatbot">
+        <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Open chatbot" aria-expanded="false" title="Chat with our AI about upcycling">
+            <i class="fas fa-comment-dots"></i>
+            <span class="chatbot-badge">AI</span>
+        </button>
+        <div id="chatbot-panel" class="chatbot-panel" aria-hidden="true">
+            <div class="chatbot-header">
+                <h3>Trash to Treasure 🎨</h3>
+                <p class="chatbot-subtitle">Transform your waste creatively</p>
+                <button id="chatbot-close" class="chatbot-close" aria-label="Close chatbot">&times;</button>
+            </div>
+            <div id="chatbot-messages" class="chatbot-messages" role="log" aria-live="polite" aria-atomic="false"></div>
+            <div class="chatbot-input-area">
+                <textarea id="chatbot-input" class="chatbot-input" placeholder="Ask me how to turn trash into treasure..." aria-label="Chat message input"></textarea>
+                <button id="chatbot-send" class="chatbot-send" aria-label="Send message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
-      </nav>
     </div>
-  </header>
-
-  <!-- Home -->
-  <section id="home-page" class="page active">
-    <div class="container" style="padding: 120px 0; text-align: center;">
-      <h1>Every Step Counts 🌿</h1>
-      <p>Gamify your green journey</p>
-      <div style="margin-top: 20px;">
-        <a href="#" class="btn btn-primary" onclick="showPage('signup')">Sign Up</a>
-        <a href="#" class="btn" onclick="showPage('signin')">Sign In</a>
-      </div>
+    
+    <!-- Splash screen shown on app load -->
+    <div id="splash" aria-hidden="true">
+        <div class="splash-inner">
+            <div class="splash-logo">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <div class="splash-title">Eco Step</div>
+            <div class="splash-sub">Gamify your green journey</div>
+        </div>
     </div>
-  </section>
 
-  <!-- Sign Up -->
-  <section id="signup-page" class="page">
-    <div class="auth-box">
-      <h2>Create Account</h2>
-      <form id="signup-form">
-        <div class="form-group">
-          <input type="text" id="signup-name" class="form-control" placeholder="Name" required />
+    <!-- Onboarding modal for first-time users -->
+    <div id="onboarding" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close onboarding">&times;</button>
+            <h2>Welcome to Eco Step 🌿</h2>
+            <div id="onboard-step" class="onboard-step">
+                <!-- Steps inserted/controlled by JS -->
+            </div>
+            <div class="onboard-actions">
+                <button id="onboard-next" class="btn btn-primary">Next</button>
+                <button id="onboard-skip" class="btn btn-secondary">Skip</button>
+            </div>
         </div>
-        <div class="form-group">
-          <input type="email" id="signup-email" class="form-control" placeholder="Email" required />
-        </div>
-        <div class="form-group">
-          <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
-        </div>
-        <div class="form-group">
-          <input type="password" id="signup-confirm-password" class="form-control" placeholder="Confirm" required />
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%">Sign Up</button>
-      </form>
-      <p style="margin-top:15px;">
-        Have an account? <a href="#" onclick="showPage('signin')">Sign In</a>
-      </p>
     </div>
-  </section>
-
-  <!-- Sign In -->
-  <section id="signin-page" class="page">
-    <div class="auth-box">
-      <h2>Sign In</h2>
-      <form id="signin-form">
-        <div class="form-group">
-          <input type="email" id="signin-email" class="form-control" placeholder="Email" required />
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>Eco Step</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" onclick="showPage('home')">Home</a>
+                    <a href="#" onclick="showPage('dashboard')" id="dashboard-link" style="display: none;">Dashboard</a>
+                    <a href="#" onclick="showPage('challenges')">Challenges</a>
+                    <a href="#" onclick="showPage('rewards')">Rewards</a>
+                    <a href="#" onclick="showPage('profile')">Profile</a>
+                    <a href="#" onclick="showPage('share-work')">Share Work</a>
+                    <a href="#" onclick="signOut()" id="signout-link" style="display: none;">Sign Out</a>
+                </div>
+                <div style="margin-left: 15px; display:flex; gap:8px; align-items:center;">
+                    <button id="theme-toggle" class="btn btn-secondary" aria-label="Toggle theme" title="Toggle light / dark" style="padding: 8px 12px; font-size: 0.95rem;"><i class="fas fa-moon"></i></button>
+                    <button id="lang-toggle" class="btn btn-secondary" aria-label="Switch language" style="padding: 8px 16px; font-size: 0.9rem;">EN | नेपाली</button>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
         </div>
-        <div class="form-group">
-          <input type="password" id="signin-password" class="form-control" placeholder="Password" required />
+    </header>
+    
+
+    <section id="home-page" class="page active">
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Every Step Counts 🌿</h1>
+                        <p>Gamify your green journey — walk the talk for our planet.</p>
+                        <div class="hero-buttons">
+                            <a href="#" class="btn btn-primary" onclick="showPage('signup')">Sign Up</a>
+                            <a href="#" class="btn btn-secondary" onclick="showPage('signin')">Sign In</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&h=500&q=80" alt="Nature landscape">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shoe-prints"></i>
+                        </div>
+                        <h3>Track Your Steps</h3>
+                        <p>Monitor your daily eco-friendly actions and see their environmental impact.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>Earn Rewards</h3>
+                        <p>Get points, badges, and real-world rewards for sustainable choices.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Join Challenges</h3>
+                        <p>Participate in community challenges to reduce carbon footprints.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Track Impact</h3>
+                        <p>Visualize your environmental impact over time with detailed analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <section id="signup-page" class="page">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2>Create Account</h2>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign Up</button>
+                </form>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" onclick="showPage('signin')">Sign In</a>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%">Sign In</button>
-      </form>
-      <p style="margin-top:15px;">
-        No account? <a href="#" onclick="showPage('signup')">Sign Up</a>
-      </p>
-    </div>
-  </section>
+    </section>
 
-  <!-- Dashboard -->
-  <section id="dashboard-page" class="page">
-    <div class="container" style="padding-top: 120px; text-align: center;">
-      <h2>Your Eco Dashboard</h2>
-      <p style="font-size: 3rem; color: var(--green); margin: 30px 0;">1,250 pts</p>
-      <p>Welcome back! You're making a difference 🌍</p>
-    </div>
-  </section>
+    <section id="signin-page" class="page">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2>Welcome Back</h2>
+                <form id="signin-form">
+                    <div class="form-group">
+                        <label for="signin-email">Email Address</label>
+                        <input type="email" id="signin-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign In</button>
+                </form>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" onclick="showPage('signup')">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 Eco Step. All rights reserved.</p>
-    </div>
-  </footer>
+    <section id="dashboard-page" class="page">
+        <div class="container">
+            <section class="dashboard">
+                <h2 class="section-title">Your Eco Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-star"></i> Your Eco Points</h3>
+                        <div class="points-display">1,250</div>
+                        <p>Keep going green! Your actions are making a difference.</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-trophy"></i> Leaderboard</h3>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">1</div>
+                            <div class="leaderboard-name">Alex Johnson</div>
+                            <div class="leaderboard-points">5,400</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">2</div>
+                            <div class="leaderboard-name">Priya Sharma</div>
+                            <div class="leaderboard-points">4,900</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">3</div>
+                            <div class="leaderboard-name">Sam Chen</div>
+                            <div class="leaderboard-points">4,500</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">4</div>
+                            <div class="leaderboard-name">You</div>
+                            <div class="leaderboard-points">1,250</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-gift"></i> Available Rewards</h3>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div>Plant a Tree</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <div>Eco-Friendly Bag</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-globe-americas"></i>
+                                </div>
+                                <div>Carbon Offset</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-user-friends"></i> Challenge Friends</h3>
+                        <p>Invite friends to join Eco Step and compete in challenges together!</p>
+                        <div class="challenge-friends">
+                            <button class="auth-btn">Copy Invite Link</button>
+                            <div class="social-icons">
+                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-  <script>
-    function showPage(page) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(page + '-page').classList.add('active');
-      updateNav();
-    }
+    <section id="challenges-page" class="page">
+        <div class="container">
+            <section class="dashboard">
+                <h2 class="section-title">Eco Challenges</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-bolt"></i> Weekly Challenge</h3>
+                        <h4>Reduce Energy Usage</h4>
+                        <p>Goal: Reduce your energy consumption by 20% this week</p>
+                        <div class="progress-bar" style="height: 20px; background: #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;">
+                            <div style="height: 100%; background: var(--primary-green); width: 65%; border-radius: 10px;"></div>
+                        </div>
+                        <p>65% completed • 2 days left</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-recycle"></i> Monthly Challenge</h3>
+                        <h4>Zero Waste Week</h4>
+                        <p>Goal: Generate zero waste for 7 consecutive days</p>
+                        <div class="progress-bar" style="height: 20px; background: #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;">
+                            <div style="height: 100%; background: var(--primary-green); width: 30%; border-radius: 10px;"></div>
+                        </div>
+                        <p>30% completed • 4 days left</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-walking"></i> Community Challenge</h3>
+                        <h4>Walk to Work</h4>
+                        <p>Goal: Walk or bike to work at least 3 times this week</p>
+                        <div class="progress-bar" style="height: 20px; background: #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;">
+                            <div style="height: 100%; background: var(--primary-green); width: 80%; border-radius: 10px;"></div>
+                        </div>
+                        <p>80% completed • 1 day left</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-leaf"></i> Seasonal Challenge</h3>
+                        <h4>Spring Cleanup</h4>
+                        <p>Goal: Participate in 3 community cleanup events</p>
+                        <div class="progress-bar" style="height: 20px; background: #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;">
+                            <div style="height: 100%; background: var(--primary-green); width: 50%; border-radius: 10px;"></div>
+                        </div>
+                        <p>50% completed • 15 days left</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-    function updateNav() {
-      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      document.getElementById('dashboard-link').style.display = loggedIn ? 'inline' : 'none';
-      document.getElementById('signout-link').style.display = loggedIn ? 'inline' : 'none';
+    <section id="rewards-page" class="page">
+        <div class="container">
+            <section class="dashboard">
+                <h2 class="section-title">Your Rewards</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-crown"></i> Premium Rewards</h3>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <div>Plant 10 Trees</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div>$50 Eco Store Voucher</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div>EV Charging Pass</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-medal"></i> Achievement Badges</h3>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <div>Eco Warrior</div>
+                            </div>
+                            <span style="color: var(--primary-green);">Unlocked</span>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-recycle"></i>
+                                </div>
+                                <div>Recycling Master</div>
+                            </div>
+                            <span style="color: var(--primary-green);">Unlocked</span>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div>Energy Saver</div>
+                            </div>
+                            <span style="color: #ccc;">Locked</span>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-gift"></i> Partner Rewards</h3>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-coffee"></i>
+                                </div>
+                                <div>Free Coffee at Eco Cafe</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <div>20% Off at Green Store</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <div class="reward-icon">
+                                    <i class="fas fa-bus"></i>
+                                </div>
+                                <div>Free Public Transport Day</div>
+                            </div>
+                            <button class="reward-btn">Claim</button>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-chart-bar"></i> Your Progress</h3>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="font-size: 2.5rem; color: var(--primary-green); font-weight: bold;">72%</div>
+                            <div>of rewards claimed</div>
+                        </div>
+                        <div style="height: 100px; background: var(--light-gray); border-radius: 10px; display: flex; align-items: flex-end; padding: 10px;">
+                            <div style="width: 20%; height: 60%; background: var(--primary-green); margin: 0 5px; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 20%; height: 80%; background: var(--primary-green); margin: 0 5px; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 20%; height: 70%; background: var(--primary-green); margin: 0 5px; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 20%; height: 90%; background: var(--primary-green); margin: 0 5px; border-radius: 5px 5px 0 0;"></div>
+                            <div style="width: 20%; height: 75%; background: var(--primary-green); margin: 0 5px; border-radius: 5px 5px 0 0;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-      if (loggedIn && ['signin', 'signup'].includes(location.hash.slice(1))) showPage('dashboard');
-      if (!loggedIn && ['dashboard'].includes(location.hash.slice(1))) showPage('signin');
-    }
+    <section id="profile-page" class="page">
+        <div class="container">
+            <section class="dashboard">
+                <h2 class="section-title">Your Profile</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" style="grid-column: span 2;">
+                        <h3><i class="fas fa-user"></i> Profile Information</h3>
+                        <div style="display: flex; align-items: center; gap: 20px; margin: 20px 0;">
+                            <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--secondary-green); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: bold;">U</div>
+                            <div>
+                                <h3>Username: EcoWarrior</h3>
+                                <p>Member since: January 2025</p>
+                                <p>Location: Kathmandu, Nepal</p>
+                            </div>
+                        </div>
+                        <button class="auth-btn">Edit Profile</button>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-history"></i> Activity History</h3>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <div>Walked to work</div>
+                                <div style="color: var(--primary-green);">+25 pts</div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <div>Recycled plastic</div>
+                                <div style="color: var(--primary-green);">+15 pts</div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <div>Planted a tree</div>
+                                <div style="color: var(--primary-green);">+50 pts</div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <div>Used reusable bag</div>
+                                <div style="color: var(--primary-green);">+10 pts</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-cog"></i> Settings</h3>
+                        <div style="margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                                <div>Dark Mode</div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                                <div>Email Notifications</div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
+                                <div>Challenge Reminders</div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-    document.getElementById('signup-form').addEventListener('submit', e => {
-      e.preventDefault();
-      if (document.getElementById('signup-password').value !== 
-          document.getElementById('signup-confirm-password').value) {
-        alert('Passwords do not match!');
-        return;
-      }
-      localStorage.setItem('isLoggedIn', 'true');
-      alert('Signed up!');
-      showPage('dashboard');
-    });
+    <section id="share-work-page" class="page">
+        <div class="container">
+            <section class="posts-section">
+                <h2 class="section-title">Share Your Eco-Work</h2>
+                
+                <div class="post-form">
+                    <h3>Create a New Post</h3>
+                    <form id="post-form">
+                        <div class="form-group">
+                            <label for="post-title">Post Title</label>
+                            <input type="text" id="post-title" class="form-control" placeholder="What eco-friendly action did you take?" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-desc">Description</label>
+                            <textarea id="post-desc" class="form-control" placeholder="Tell us more about your eco-friendly work..." rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-image">Image URL (optional)</label>
+                            <input type="url" id="post-image" class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <button type="submit" class="auth-btn">Post</button>
+                    </form>
+                </div>
 
-    document.getElementById('signin-form').addEventListener('submit', e => {
-      e.preventDefault();
-      localStorage.setItem('isLoggedIn', 'true');
-      alert('Signed in!');
-      showPage('dashboard');
-    });
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">Recent Posts</h3>
+                <div id="no-posts" style="text-align: center; padding: 40px; color: #666;">
+                    <p>No posts yet. Be the first to share your eco-friendly work!</p>
+                </div>
+                <div id="posts-grid" class="posts-grid"></div>
+            </section>
+        </div>
+    </section>
 
-    function signOut() {
-      localStorage.clear();
-      alert('Signed out.');
-      showPage('signin');
-    }
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Eco Step</h3>
+                    <p>Gamifying sustainability for a greener future.</p>
+                    <div class="social-icons-footer">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                        <li><a href="#" onclick="showPage('challenges')">Challenges</a></li>
+                        <li><a href="#" onclick="showPage('rewards')">Rewards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Sustainability Guide</a></li>
+                        <li><a href="#">Environmental Tips</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> info@ecostep.np</li>
+                        <li><i class="fas fa-phone"></i> +977-98-43000000</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Kathmandu, Nepal</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Eco Step. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
 
-    document.addEventListener('DOMContentLoaded', () => {
-      updateNav();
-    });
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
-\
