@@ -576,7 +576,7 @@ function initScrollReveal() {
 // GEMINI TRASH-TO-TREASURE CHATBOT
 // ========================================
 
-const GEMINI_API_KEY = 'AIzaSyAzkHUj6g87tDuouqciN3k7zIEcws3xRNY';
+const GEMINI_API_KEY = ;
 let genAI = null;
 let chatSession = null;
 
@@ -779,4 +779,5 @@ if (mobileMenuBtn) {
         }
     });
 }
+
 
